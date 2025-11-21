@@ -1,37 +1,17 @@
-# Three.js & ammo.js (enable3d)
+# 121-Final-Project
 
-<img width="640" alt="screenshot" src="./readme/screenshot.png">
+## Devlog Entry - 14 November 2025
 
----
+### Introducing the team
 
-## Example of Three.js with ammo.js
+Aegis Michael: Design Lead
+Julia Manou: Tools Lead + Testing Lead
+Sophie DeGeorge: Engine Lead
 
-- Contains a **CSG Example with BufferGeometries**.
-- Contains the **Flat Package for 2D Elements**.
+### Tools and materials
+Language: We decided to go with TypeScript since it’s what we’ve been using for the class and we are all familiar with the language. Because we’re using a web-dev environment, we’ll almost definitely be using CSS as well, and HTML is a given.
+Tools: We will be coding in Visual Studio Code on codespaces because that is what we are most familiar with. Additionally, we will be using three.js for 3d rendering and ammo.js for physics.
+Generative AI: We will not be using any generative AI.
 
-## Projects
-
-The `index.ts` file contains to different project:
-
-- `three.ts` file contains a three.js project with Enable3d's **Physics Extension**.
-- `standalone.ts` file contains a **Standalone Enable3d** project.
-
-## Install & Run
-
-```console
-# download this repo
-npx gitget enable3d/threejs-ammojs-webpack-example enable3d-webpack
-
-# navigate into the directory
-cd enable3d-webpack
-
-# install
-npm install
-
-# start
-npm start
-```
-
-## Dependencies
-
-The only dependency is `enable3d`. All other dependencies (three.js etc.), are installed with `enable3d`. 
+### Outlook
+We are hoping to expand on our knowledge of web development. More specifically, we are interested in learning how to make browser games more interesting and make more interesting browser games!
