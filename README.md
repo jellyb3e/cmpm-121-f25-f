@@ -9,13 +9,13 @@
 3. We are using ammo.js for physics simulation
 4. Our puzzle requires the player to hit the green button to win. If they hit the wrong one, they lose!
 5. The player is able to control their movement to navigate toward either button
-6. blah
-7. blah
-8. blah
+6. When the player hits either button (red or green), a text popup will appear for win/lose states
+7. We have linting integrated through Deno
+8. We have set up automatic packaging and deployment to GitHub Pages
 
 ### Reflection
 
-We have updated our devlog entry to reflect the libraries we're currently using-- there was a bit of confusion as to whether three.js was just for 3d rendering or if it also handled physics. Additionally, we are using npm to run the dev server rather than deno which is what we used in our intial build.
+We have updated our devlog entry to reflect the libraries we're currently using-- there was a bit of confusion as to whether three.js was just for 3d rendering or if it also handled physics. Additionally, we are using npm to run the dev server rather than deno which is what we used in our intial build. However, we still intend to use deno for linting.
 
 ## Devlog Entry - 14 November 2025
 
