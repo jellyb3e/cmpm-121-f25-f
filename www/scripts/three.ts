@@ -68,16 +68,16 @@ const MainScene = () => {
   document.body.appendChild(renderer.domElement);
 
   // add 2d text
-  const text = new TextTexture('welcome to chudville: population you', { fontWeight: 'bold', fontSize: 48 });
+  const text = new TextTexture('welcome to chudville, population: you', { fontWeight: 'bold', fontSize: 48 });
   const sprite = new TextSprite(text);
   const scale = 0.5;
   sprite.setScale(scale);
   sprite.setPosition(0 + (text.width * scale) / 2 + 12, height - (text.height * scale) / 2 - 12);
   scene2d.add(sprite);
 
-  const endText = new TextTexture('you win!', { fontWeight: 'bold', fontSize: 48 });
+  const winTexture = new TextTexture('you win!', { fontWeight: 'bold', fontSize: 48 });
   const loseTexture = new TextTexture('you lsoe!', { fontWeight: 'bold', fontSize: 48 });
-  const endSprite = new TextSprite(endText);
+  const endSprite = new TextSprite(winTexture);
   endSprite.setScale(scale);
   endSprite.setPosition((window.innerWidth / 2), (window.innerHeight / 2));
   scene2d.add(endSprite);
@@ -99,7 +99,7 @@ const MainScene = () => {
 
   // physics
   const physics = new AmmoPhysics(scene as any);
-  physics.debug?.enable();
+  //physics.debug?.enable();
 
   // extract the object factory from physics
   // the factory will make/add object without physics
