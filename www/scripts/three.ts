@@ -7,6 +7,7 @@ import { AmmoPhysics, ExtendedMesh, ExtendedObject3D, PhysicsLoader } from '@ena
 
 // flat
 import { TextTexture, TextSprite } from '@enable3d/three-graphics/dist/flat';
+import { ThreeGraphics } from '@enable3d/three-graphics';
 
 const MainScene = () => {
   // colors
@@ -14,7 +15,8 @@ const MainScene = () => {
   const RED = 0xff0000;
   const GREEN = 0x00ff00;
   const BACKGROUND_COLOR = 0xf0f0f0;
-  const GROUND_COLOR = 0x000000;
+  const GROUND_COLOR = 0x704e30;
+  const HAND_COLOR = 0xcde01f;
 
   // tunable gameplay values
   const ROTATION_SPEED = .01;
@@ -53,7 +55,7 @@ const MainScene = () => {
 
   // camera
   const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-  camera.position.set(10, 10, 20);
+  camera.position.set(0, 15, 20);
   camera.lookAt(0, 0, 0);
 
   // 2d camera/2d scene
@@ -155,6 +157,34 @@ const MainScene = () => {
     ground.rotation.x = Math.max(-maxRotation, Math.min(maxRotation, ground.rotation.x + delta.x));
     ground.rotation.z = Math.max(-maxRotation, Math.min(maxRotation, ground.rotation.z + delta.z));
   }
+
+  const createHand = (hand: "left" | "right") => {
+    let dir = 1;
+    if (hand == "left") { dir = -1; }
+
+    const thumb = factory.add.capsule({ x: 10 * dir, y: .75, z: 1.75, length: 2, radius: 1 }, { lambert: { color: HAND_COLOR } });
+    thumb.rotation.x = -Math.PI / 2;
+    thumb.rotation.z = dir * Math.PI / 3;
+
+    const pointer = factory.add.capsule({ x: 10.5 * dir, y: 1.5, z: .5, length: 3, radius: 1 }, { lambert: { color: HAND_COLOR } });
+    pointer.rotation.x = -Math.PI / 3;
+    pointer.rotation.z = dir * Math.PI / 10;
+
+    const middle = factory.add.capsule({ x: 11.25 * dir, y: 0.5, z: .25, length: 3.5, radius: 1 }, { lambert: { color: HAND_COLOR } });
+    middle.rotation.x = -Math.PI / 2;
+
+    const pinky = factory.add.capsule({ x: 11.25 * dir, y: -0.5, z: .5, length: 3, radius: 1 }, { lambert: { color: HAND_COLOR } });
+    pinky.rotation.x = -2 * Math.PI / 3;
+
+    const arm = factory.add.capsule({ x: 11 * dir, y: 0.5, z: 7, length: 10, radius: 1 }, { lambert: { color: HAND_COLOR } });
+    arm.rotation.x = -Math.PI / 2;
+
+
+
+    ground.add(thumb, pointer, middle, pinky, arm);
+  }
+  createHand("right");
+  createHand("left");
 
   // button creation
   const winButton = createButton(-5, 1, 0, GREEN, () => {
