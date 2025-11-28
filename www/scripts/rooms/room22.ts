@@ -43,7 +43,8 @@ export const Room22Scene = () => {
             z: 0,
             width: 20,
             height: 1,
-            depth: 20
+            depth: 20,
+            collisionFlags: 0
         },
         {
             lambert: { color: Global.GROUND_COLOR },
@@ -52,8 +53,51 @@ export const Room22Scene = () => {
     );
     ground.body.setCollisionFlags(2);
 
+    const mazeMap: number[] =
+        [
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1,
+            1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1,
+            1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+            1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1,
+            1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1,
+            1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1,
+            1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+        ]
+
+    for (let i: number = 0; i < 16; i++) {
+        for (let j: number = 0; j < 16; j++) {
+            if (mazeMap[j * 16 + i] == 1) {
+                const newCell = physics.add.box(
+                    {
+                        x: i * 1.25 - 9.375,
+                        y: 1,
+                        z: j * 1.25 - 9.375,
+                        width: 1.25,
+                        height: 1,
+                        depth: 1.25,
+                        collisionFlags: 1
+                    },
+                    {
+                        lambert: { color: "rgba(73, 157, 73, 1)" },
+                        mass: 0
+                    }
+                );
+                ground.add(newCell);
+            }
+        }
+    }
+
     // rolling ball
-    const ball = physics.add.sphere({ x: 0, y: 3, z: 0, radius: 1 }, { lambert: { color: YELLOW } });
+    const ball = physics.add.sphere({ x: 0, y: 3, z: 0, radius: 0.3 }, { lambert: { color: YELLOW } });
 
     const updateRotation = () => {
         ground.rotation.x = Math.max(-Global.MAX_ROTATION, Math.min(Global.MAX_ROTATION, ground.rotation.x + Global.delta.z));
