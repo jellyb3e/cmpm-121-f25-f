@@ -24,7 +24,7 @@ export const Room22Scene = () => {
     const physics = new AmmoPhysics(scene as any);
     const { factory } = physics;
 
-    ThreeUtils.makeRoom(physics,5,0,-1,0);
+    ThreeUtils.makeRoom(physics, 5, 0, -1.5, 0);
 
     // static ground
     const ground = physics.add.box(
