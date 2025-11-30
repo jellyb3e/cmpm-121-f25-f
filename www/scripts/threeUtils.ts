@@ -37,14 +37,20 @@ function clampDoorPos(num: number) {
 }
 
 // door creation function
-export function makeDoor(x: number, y: number, z: number, rotation: number, physics: AmmoPhysics, nextRoom: string, color: number = Global.DOOR_COLOR) {
+export function makeDoor(x: number, y: number, z: number, rotation: number, physics: AmmoPhysics, nextRoom: string, locked: boolean = false, color: number = Global.DOOR_COLOR) {
     const door = physics.add.box({ x: x, y: y, z: z, width: .25, height: 3, depth: 2 }, { lambert: { color: color } });
     door.body.setCollisionFlags(2);
+    door.userData.locked = locked;
     door.rotation.y = rotation * (Math.PI / 180);
     door.body.needUpdate = true;
 
     door.body.on.collision((other: any) => {
         if (compareTag(other.userData.tag, Global.playerTag)) {
+            if (door.userData.locked == true) {
+                console.log("locked!");
+                return;
+            }
+
             let playerX = clampDoorPos(x);
             let playerY = Global.getPlayerPosition().y;
             let playerZ = clampDoorPos(z);
