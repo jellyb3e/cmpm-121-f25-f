@@ -62,7 +62,7 @@ const MasterScene = () => {
     requestAnimationFrame(animate);
 }
 
-PhysicsLoader('/ammo', () => {
+PhysicsLoader('ammo', () => {
     scenes = {
         'room11': Room11Scene(),
         'room22': Room22Scene(),
