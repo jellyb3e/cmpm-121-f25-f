@@ -8,6 +8,6 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["www/scripts/**/*"],
+  "include": ["scripts/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
