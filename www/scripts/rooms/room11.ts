@@ -33,7 +33,7 @@ export const Room11Scene = () => {
     ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room23", Global.BLUE);
 
     const ball = physics.add.sphere({ x: 0, y: 1.2, z: 0, radius: 0.4 }, { lambert: { color: Global.YELLOW } });
-    const triggerUpdate = ThreeUtils.createCollectible(ball,physics);
+    const triggerUpdate = ThreeUtils.createCollectible(ball,physics,() => {ThreeUtils.addToInventory(ball)});
 
     // clock
     const clock = new THREE.Clock();

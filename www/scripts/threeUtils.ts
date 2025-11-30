@@ -106,7 +106,6 @@ export function createCollectible(collectible: ExtendedMesh, physics: AmmoPhysic
     trigger.body.on.collision((other: any) => {
         if (compareTag(other.userData.tag, Global.playerTag) && getInteract() && !collected(collectible)) {
             onCollect();
-            addToInventory(collectible);
         }
     });
 
