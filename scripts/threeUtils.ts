@@ -72,7 +72,7 @@ export function makePlayer(physics: AmmoPhysics) {
     return player;
 }
 
-export function drawSlot(i: number, slotType: "slot" | "selector" = "slot") {
+function drawSlot(i: number, slotType: "slot" | "selector" = "slot") {
     const slot = (slotType == "slot") ? ICONS.inventorySlot.draw() : ICONS.inventorySelector.draw();
     const inventoryPos = inventoryIndexToScreenPos(i);
     slot.setPosition(inventoryPos.x, inventoryPos.y);
@@ -95,46 +95,75 @@ export function drawInventory() {
     }
 }
 
-export function compareTag(tag: string, otherTag: string) {
+function compareTag(tag: string, otherTag: string) {
     return tag == otherTag;
 }
 
-export function collected(collectible: ExtendedMesh) {
+function collected(collectible: ExtendedMesh) {
     return collectible.userData.collected;
 }
 
-export function createCollectible(name: string, icon: DrawSprite, object: ExtendedMesh, physics: AmmoPhysics, onCollect: Function = () => { }, radius: number = 1) {
+export function createCollectible(
+    name: string,
+    icon: DrawSprite,
+    object: ExtendedMesh,
+    physics: AmmoPhysics,
+    onCollect: Function = () => { }
+) {
     object.userData.tag = Global.collectibleTag;
     object.userData.collected = false;
-    const trigger = physics.add.sphere({ x: 0, y: 0, z: 0, radius: radius, collisionFlags: 6 });
-    trigger.visible = false;
 
-    const triggerUpdate = () => {
-        trigger.position.copy(object.position);
-        trigger.body.needUpdate = true;
-    }
+    const trigger = makeTrigger(physics);
 
-    const collectible: Global.collectible = { name: name, icon: icon, object, triggerUpdate };
-
-    trigger.body.on.collision((other: any) => {
-        if (compareTag(other.userData.tag, Global.playerTag) && getInteract() && !collected(object)) {
-            addToInventory(collectible);
-            onCollect();
+    const collectible: Global.collectible = {
+        name,
+        icon,
+        object,
+        trigger,
+        triggerUpdate: () => {
+            collectible.trigger.position.copy(object.position);
+            collectible.trigger.body.needUpdate = true;
+        },
+        collisionCallback: (other: any) => {
+            if (compareTag(other.userData.tag, Global.playerTag) && getInteract() && !collected(object)) {
+                addToInventory(collectible);
+                onCollect();
+            }
         }
-    });
-
+    };
+    trigger.body.on.collision(collectible.collisionCallback);
     return collectible;
 }
 
-export function addToInventory(collectible: Global.collectible) {
+function bindTriggerCollision(collectible: Global.collectible) {
+    collectible.trigger.body.on.collision(collectible.collisionCallback);
+}
+
+function addToInventory(collectible: Global.collectible) {
     for (let i = 0; i < Global.inventorySlots; i++) {
         if (Global.INVENTORY[i] == null && !collectible.object.userData.collected) {
-            setActive3D(collectible.object, false);
+            setActive3D(collectible, false);
             setActive2D(collectible.icon, true, i);
+            removeFromSceneCollectibles(collectible);
 
             Global.INVENTORY[i] = collectible;
             return;
         }
+    }
+}
+
+function makeTrigger(physics: AmmoPhysics) {
+    const trigger = physics.add.sphere({ x: 0, y: 0, z: 0, radius: 1, collisionFlags: 6 });
+    trigger.visible = false;
+    return trigger;
+}
+
+function removeFromSceneCollectibles(collectible: Global.collectible) {
+    const collectibles = Global.getCurrentScene().collectibles;
+    const index = collectibles.findIndex(item => item.name === collectible.name);
+
+    if (index !== -1) {
+        collectibles.splice(index, 1);
     }
 }
 
@@ -166,27 +195,39 @@ export function dropCurrentItem() {
             return; // prevent dropping items into puzzle scene
         }
     }
-    setActive3D(selectorItem.object, true);
+    setActive3D(selectorItem, true);
     setActive2D(selectorItem.icon, false);
+    Global.getCurrentScene().collectibles.push(selectorItem);
     Global.INVENTORY[selectorIndex] = null;
 }
 
-function setActive3D(object: ExtendedMesh, value: boolean) {
+function setActive3D(collectible: Global.collectible, value: boolean) {
+    const object = collectible.object;
+    const scene = Global.getCurrentScene();
+
     object.userData.collected = !value;
     if (!value) {
-        Global.getCurrentScene().scene.remove(object);
-        Global.getCurrentScene().physics.destroy(object);
+        scene.scene.remove(object);
+        scene.physics.destroy(object);
+        scene.scene.remove(collectible.trigger);
+        scene.physics.destroy(collectible.trigger);
         return;
     }
+
     const dropPos = getDropPosition();
     object.position.x = dropPos.x;
     object.position.z = dropPos.y;
 
-    Global.getCurrentScene().physics.add.existing(object);
-    Global.getCurrentScene().scene.add(object);
+    scene.physics.add.existing(object);
+    scene.scene.add(object);
+
+    collectible.trigger = makeTrigger(scene.physics);
+    scene.scene.add(collectible.trigger);
+    bindTriggerCollision(collectible);
 
     object.body.needUpdate = true;
 }
+
 
 function getDropPosition(dropDist: number = 2) {
     const playerPosVec3 = Global.getPlayerPosition();

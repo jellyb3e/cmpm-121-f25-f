@@ -8,7 +8,9 @@ export type collectible = {
     name: string;
     icon: DrawSprite;
     object: ExtendedMesh;
+    trigger: ExtendedMesh;
     triggerUpdate: () => void;
+    collisionCallback: (other: any) => void;
 }
 export type sceneType = {
     scene: THREE.Scene,
