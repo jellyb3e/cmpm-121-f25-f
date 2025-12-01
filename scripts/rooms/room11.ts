@@ -10,6 +10,7 @@ import { TextTexture, TextSprite, DrawSprite } from '@enable3d/three-graphics/di
 import * as Global from '../global';
 import * as ThreeUtils from '../threeUtils';
 import { switchScheme } from '../controls';
+import { ICONS } from '../icons';
 
 export const Room11Scene = () => {
     // scene
@@ -33,7 +34,12 @@ export const Room11Scene = () => {
     ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room23", true);
 
     const ball = physics.add.sphere({ x: 0, y: 1.2, z: 0, radius: 0.4 }, { lambert: { color: Global.YELLOW } });
-    const triggerUpdate = ThreeUtils.createCollectible(ball,physics,() => {ThreeUtils.addToInventory(ball)});
+    const ballCollectible = ThreeUtils.createCollectible(
+        "Ball",
+        ICONS.puzzle.draw(),
+        ball,
+        physics
+    );
 
     // clock
     const clock = new THREE.Clock();
@@ -48,10 +54,10 @@ export const Room11Scene = () => {
 
     const sceneUpdate = () => {
         ThreeUtils.movePlayer(player);
-        triggerUpdate();
+        ballCollectible.triggerUpdate();
 
         physics.update(clock.getDelta() * 1000);
         physics.updateDebugger();
     }
-    return { scene, sceneUpdate, initialize };
+    return { scene, sceneUpdate, initialize } as Global.sceneType;
 }

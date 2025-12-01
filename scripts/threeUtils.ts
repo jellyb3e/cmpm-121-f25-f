@@ -1,12 +1,13 @@
 
 import * as Global from './global';
+import { ohexToRGBA, ICONS } from './icons';
 import { delta, getInteract } from './controls';
-import { THREE, ExtendedMesh } from 'enable3d'
+import { ExtendedMesh } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics';
-import { ThreeGraphics } from '@enable3d/three-graphics';
-import { DrawSprite } from '@enable3d/three-graphics/dist/flat';
+import { DrawSprite, TextSprite, TextTexture } from '@enable3d/three-graphics/dist/flat';
 import Factories from '@enable3d/common/dist/factories';
 
+// functions
 export function movePlayer(player: ExtendedMesh) {
     if (delta.x == 0 && delta.z == 0) {
         player.body.setVelocity(0, 0, 0);
@@ -18,6 +19,7 @@ export function movePlayer(player: ExtendedMesh) {
     const delZNormalized = (delta.z / hypot) * Global.MOVE_SPEED;
 
     player.body.setVelocity(delXNormalized, 0, delZNormalized);
+    Global.setPlayerPosition(player.position.x, player.position.y, player.position.z);
 }
 
 export function makeRoom(physics: AmmoPhysics, scale: number = 1, x: number = 0, y: number = 0, z: number = 0) {
@@ -29,8 +31,6 @@ export function makeRoom(physics: AmmoPhysics, scale: number = 1, x: number = 0,
     physics.add.box({ x: x * scale, y: (y + 2) * scale, z: (z + 10.5) * scale, width: 20 * scale, height: 5 * scale, depth: 1 * scale, mass: 0 }, { lambert: { color: Global.WALL_COLOR } }).body.setCollisionFlags(2);
     physics.add.box({ x: x * scale, y: (y + 2) * scale, z: (z - 10.5) * scale, width: 20 * scale, height: 5 * scale, depth: 1 * scale, mass: 0 }, { lambert: { color: Global.WALL_COLOR } }).body.setCollisionFlags(2);
 }
-
-
 
 const doorOffset = 1;   // how far from door the player spawns (so scenes don't flicker forever)
 // clamp one axis value (x,y,z) of player pos when going through doors
@@ -71,30 +71,26 @@ export function makePlayer(physics: AmmoPhysics) {
     return player;
 }
 
-// draw rectangle function for easy use in drawing inventory
-const drawRectangle = (strokeStyle, fillStyle) => (ctx) => {
-    const { width } = ctx.canvas;
-    ctx.beginPath();
-    ctx.strokeStyle = strokeStyle;
-    ctx.fillStyle = fillStyle;
-    ctx.lineWidth = 5;
-    ctx.rect(0, 0, width, width);
-    ctx.fill();
-    ctx.stroke();
-};
-
-export function drawSlot(strokeStyle, fillStyle, i: number) {
-    const slot = new DrawSprite(Global.inventorySlotSize, Global.inventorySlotSize, drawRectangle(strokeStyle, fillStyle));
+export function drawSlot(i: number, slotType: "slot" | "selector" = "slot") {
+    const slot = (slotType == "slot") ? ICONS.inventorySlot.draw() : ICONS.inventorySelector.draw();
     const inventoryPos = inventoryIndexToScreenPos(i);
     slot.setPosition(inventoryPos.x, inventoryPos.y);
     Global.scene2d.add(slot);
+
+    if (slotType == "slot") {
+        const labelTexture = new TextTexture(`${i + 1}`, { fontSize: 24, fillStyle: "black" });
+        const label = new TextSprite(labelTexture);
+        label.setPosition(slot.position.x, slot.position.y + (Global.inventorySlotSize / 2));
+        label.renderOrder = 1;
+        Global.scene2d.add(label);
+    }
     return slot;
 }
 
 // draw inventory to hud (scene2d) based on global parameters
 export function drawInventory() {
     for (let i = 0; i < Global.inventorySlots; i++) {
-        drawSlot('rgba(42, 42, 42, 1)', 'rgba(0,0,0,0.2)', i);
+        drawSlot(i);
     }
 }
 
@@ -106,37 +102,36 @@ export function collected(collectible: ExtendedMesh) {
     return collectible.userData.collected;
 }
 
-export function createCollectible(collectible: ExtendedMesh, physics: AmmoPhysics, onCollect: Function = () => { }, radius: number = 1) {
-    collectible.userData.tag = Global.collectibleTag;
-    collectible.userData.collected = false;
+export function createCollectible(name: string, icon: DrawSprite, object: ExtendedMesh, physics: AmmoPhysics, onCollect: Function = () => { }, radius: number = 1) {
+    object.userData.tag = Global.collectibleTag;
+    object.userData.collected = false;
     const trigger = physics.add.sphere({ x: 0, y: 0, z: 0, radius: radius, collisionFlags: 6 });
     trigger.visible = false;
+
+    const triggerUpdate = () => {
+        trigger.position.copy(object.position);
+        trigger.body.needUpdate = true;
+    }
+
+    const collectible: Global.collectible = { name: name, icon: icon, object, triggerUpdate };
+
     trigger.body.on.collision((other: any) => {
-        if (compareTag(other.userData.tag, Global.playerTag) && getInteract() && !collected(collectible)) {
+        if (compareTag(other.userData.tag, Global.playerTag) && getInteract() && !collected(object)) {
             onCollect();
+            addToInventory(collectible);
         }
     });
 
-    const triggerUpdate = () => {
-        trigger.position.copy(collectible.position);
-        trigger.body.needUpdate = true;
-    }
-    return triggerUpdate;
+    return collectible;
 }
 
-export function addToInventory(collectible: ExtendedMesh) {
+export function addToInventory(collectible: Global.collectible) {
     for (let i = 0; i < Global.inventorySlots; i++) {
         if (Global.INVENTORY[i] == null) {
-            collectible.userData.collected = true;
+            setActive3D(collectible.object, false);
+            setActive2D(collectible.icon, true, i);
 
-            collectible.visible = false;
-            collectible.body.setCollisionFlags(2);
-            collectible.position.x = -100;
-            collectible.position.z = -100;
-            collectible.body.needUpdate = true;
-
-            const item = drawSlot('rgba(42, 42, 42, 1)', 'rgba(0,0,0,0.2)', i);
-            Global.INVENTORY[i] = "unga bunga";
+            Global.INVENTORY[i] = collectible;
             return;
         }
     }
@@ -148,30 +143,64 @@ function inventoryIndexToScreenPos(i: number) {
 }
 
 // inventory selector (which item is selected)
-const inventorySelector = drawSlot('rgba(21, 58, 31, 1)', 'rgba(255, 255, 255, 0)', 0);
 let selectorIndex: number = 0;
+const inventorySelector = drawSlot(selectorIndex, "selector");
 
 export function moveInventorySelector(i: number) {
     // shifts from r->l inventory to l->r
     const inventoryPos = inventoryIndexToScreenPos(i);
-    let selectorIndex = i;
+    selectorIndex = i;
     inventorySelector.setPosition(inventoryPos.x, inventoryPos.y);
 }
 
 export function dropCurrentItem() {
-    if (Global.INVENTORY[selectorIndex]) {
-        // TODO: REMOVE VISUAL
-        Global.INVENTORY[selectorIndex] = null;
+    const selectorItem = Global.INVENTORY[selectorIndex];
+    if (!selectorItem) return;
+
+    if (Global.getHoldingPuzzle()) {
+        if (selectorItem.name == "puzzle") {
+            Global.goToLastScene();
+            Global.setHoldingPuzzle(false);
+        } else {
+            return; // prevent dropping items into puzzle scene
+        }
+    }
+    setActive3D(selectorItem.object, true);
+    setActive2D(selectorItem.icon, false);
+    Global.INVENTORY[selectorIndex] = null;
+}
+
+function setActive3D(object: ExtendedMesh, value: boolean) {
+    object.userData.collected = !value;
+    object.visible = value;
+    object.body.setCollisionFlags((value) ? 0 : 5);
+
+    object.position.x = (value) ? Global.getPlayerPosition().x : -100;
+    object.position.z = (value) ? Global.getPlayerPosition().z : -100;
+
+    object.body.needUpdate = true;
+    if (value) { Global.getCurrentScene().scene.add(object); }
+    else { Global.getCurrentScene().scene.remove(object); }
+}
+
+function setActive2D(icon: DrawSprite, active: boolean, i: number = 0) {
+    if (active) {
+        Global.scene2d.add(icon);
+        const iconPos = inventoryIndexToScreenPos(i);
+        icon.setPosition(iconPos.x, iconPos.y);
+    } else {
+        Global.scene2d.remove(icon);
+        icon.setPosition(-100, -100);
     }
 }
 
 export function makePuzzle(x: number, y: number, z: number, physics: AmmoPhysics) {
     const puzzle = physics.add.box({ x: x, y: y, z: z, width: 1.5, depth: 1.5, height: .3 }, { lambert: { color: Global.PUZZLE_COLOR } });
-    const triggerUpdate = createCollectible(puzzle, physics, () => {
+    const collectible = createCollectible("puzzle", ICONS.puzzle.draw(), puzzle, physics, () => {
         Global.setCurrentScene("room22");
         Global.setHoldingPuzzle(true);
     });
-    return triggerUpdate;
+    return collectible;
 }
 
 export function createHand(x: number, y: number, z: number, hand: "left" | "right", ground: ExtendedMesh, factory: Factories) {

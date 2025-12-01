@@ -56,12 +56,6 @@ createKeybinding('e', () => { interact = true; }, () => { interact = false; });
 
 // drop binding
 createKeybinding('q', () => {
-    if (Global.getHoldingPuzzle()) {
-        Global.setHoldingPuzzle(false);
-        Global.setCurrentScene(Global.getLastScene());
-        return;
-    }
-
     dropCurrentItem();
 });
 

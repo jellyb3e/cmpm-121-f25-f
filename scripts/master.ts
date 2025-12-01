@@ -14,9 +14,6 @@ import { Room11Scene } from './rooms/room11';
 import { Room22Scene } from './rooms/room22';
 import { Room23Scene } from './rooms/room23';
 
-let currentScene: { scene: THREE.Scene, sceneUpdate: () => void, initialize: () => void };
-let scenes: Record<string, any>;
-
 const MasterScene = () => {
     // camera
     const camera = new THREE.PerspectiveCamera(50, Global.width / Global.height, 0.1, 1000);
@@ -43,17 +40,12 @@ const MasterScene = () => {
 
     // loop
     const animate = () => {
-        if (scenes[Global.getCurrentScene()] !== currentScene) {
-            currentScene = scenes[Global.getCurrentScene()];
-            currentScene.initialize();
-        }
-
-        currentScene.sceneUpdate();
+        Global.getCurrentScene().sceneUpdate();
 
         // you have to clear and call render twice because there are 2 scenes
         // one 3d scene and one 2d scene
         renderer.clear();
-        renderer.render(currentScene.scene, camera);
+        renderer.render(Global.getCurrentScene().scene, camera);
         renderer.clearDepth();
         renderer.render(Global.scene2d, camera2d);
 
@@ -63,11 +55,11 @@ const MasterScene = () => {
 }
 
 PhysicsLoader('ammo', () => {
-    scenes = {
+    Global.addScenes({
         'room11': Room11Scene(),
         'room22': Room22Scene(),
         'room23': Room23Scene()
-    };
+    });
 
     Global.setCurrentScene("room23");
     MasterScene();
