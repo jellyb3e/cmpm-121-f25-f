@@ -121,6 +121,7 @@ export function createCollectible(
         object,
         trigger,
         triggerUpdate: () => {
+            if (!collectible.trigger || !collectible.trigger.body) return;
             collectible.trigger.position.copy(object.position);
             collectible.trigger.body.needUpdate = true;
         },
