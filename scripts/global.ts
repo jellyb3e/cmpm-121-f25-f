@@ -1,5 +1,5 @@
 import { AmmoPhysics } from '@enable3d/ammo-physics';
-import { DrawSprite } from '@enable3d/three-graphics/dist/flat';
+import { DrawSprite, TextSprite } from '@enable3d/three-graphics/dist/flat';
 import { ExtendedMesh } from 'enable3d';
 import * as THREE from 'three';
 
@@ -7,6 +7,7 @@ import * as THREE from 'three';
 export type collectible = {
     name: string;
     icon: DrawSprite;
+    label: TextSprite;
     object: ExtendedMesh;
     trigger: ExtendedMesh;
     triggerUpdate: () => void;
@@ -24,8 +25,10 @@ export type sceneType = {
 export const width = window.innerWidth;
 export const height = window.innerHeight;
 
-// HUD SCENE (shared across all scenes)
-export const scene2d = new THREE.Scene();
+// HUD SCENE (shared across all rooms)
+let currentScene2D: THREE.Scene = new THREE.Scene();
+export const gameScene2D = new THREE.Scene();
+export const endScene2D = new THREE.Scene();
 
 // colors
 export const BACKGROUND_COLOR = 0xf0f0f0;
@@ -42,6 +45,10 @@ export const PUZZLE_WALL_COLOR = 0x47382a;
 export const INVENTORY_BORDER_COLOR = 0x2a2a2a;
 export const INVENTORY_FILL_COLOR = 0x000000;
 export const INVENTORY_SELECTOR_COLOR = 0x153a1f;
+
+// materials
+export const unlockedDoorMat = new THREE.MeshLambertMaterial({ color: DOOR_COLOR });
+export const lockedDoorMat = new THREE.MeshLambertMaterial({ color: LOCKED_COLOR });
 
 // tags
 export const playerTag = "player";
@@ -68,6 +75,14 @@ export const scenes: Record<string, any> = {};
 
 export function getCurrentScene() {
     return currentScene;
+}
+
+export function getCurrentScene2D() {
+    return currentScene2D;
+}
+
+export function setCurrentScene2D(newScene: THREE.Scene) {
+    currentScene2D = newScene;
 }
 
 export function setCurrentScene(newSceneName: string) {
@@ -116,6 +131,5 @@ export function getHasKey() {
 }
 
 export function setHasKey(value: boolean) {
-    console.log("setting")
     hasKey = value;
 }

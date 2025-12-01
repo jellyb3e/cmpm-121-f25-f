@@ -123,6 +123,7 @@ export const Room22Scene = () => {
 
     const initialize = () => {
         switchScheme("rotation");
+        Global.setCurrentScene2D(Global.gameScene2D);
     }
 
     const sceneUpdate = () => {

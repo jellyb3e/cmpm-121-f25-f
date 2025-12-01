@@ -1,21 +1,22 @@
 import * as Global from './global';
-import { dropCurrentItem, moveInventorySelector } from './threeUtils';
+import { dropCurrentItem, moveInventorySelector } from './inventoryUtils';
 
 // control setup
 export const delta = { x: 0, z: 0, del: 1 };
 export const keys: Record<string, boolean> = {};
 let interact: boolean = false;
+let use: boolean = false;
 
 // global getter to see if player is holding interact key
-export function getInteract() {
-    return interact;
-}
+export function getInteract() { return interact; }
+export function getUse() { return use; }
 
 export const switchScheme = (scheme: "rotation" | "movement") => {
     for (const key in keys) keys[key] = false;
     delta.x = 0;
     delta.z = 0;
     interact = false;
+    use = false;
 
     if (scheme == "rotation") {
         delta.del = Global.ROTATION_SPEED;
@@ -59,8 +60,11 @@ createKeybinding('q', () => {
     dropCurrentItem();
 });
 
+// use binding
+createKeybinding('r', () => { use = true; }, () => { use = false; });
+
 // inventory bindings
 for (let i = 1; i <= Global.inventorySlots; i++) {
     if (i > 9) break;
-    createKeybinding(`${i}`, () => { moveInventorySelector(i-1) });
+    createKeybinding(`${i}`, () => { moveInventorySelector(i - 1) });
 }

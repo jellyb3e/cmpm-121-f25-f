@@ -39,13 +39,14 @@ export const Room11Scene = () => {
     ThreeUtils.makeRoom(physics);
     ThreeUtils.makeDoor(10, 2, 0, 0, physics, "room23");
     // EXIT DOOR
-    ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room23", true);
+    ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room12", true);
 
     // clock
     const clock = new THREE.Clock();
 
     const initialize = () => {
         switchScheme("movement");
+        Global.setCurrentScene2D(Global.gameScene2D);
 
         scene.remove(player);
         physics.destroy(player);

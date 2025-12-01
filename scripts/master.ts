@@ -11,8 +11,10 @@ import { TextTexture, TextSprite } from '@enable3d/three-graphics/dist/flat';
 import * as Global from './global';
 import * as ThreeUtils from './threeUtils';
 import { Room11Scene } from './rooms/room11';
+import { Room12Scene } from './rooms/room12';
 import { Room22Scene } from './rooms/room22';
 import { Room23Scene } from './rooms/room23';
+import { drawInventory } from './inventoryUtils';
 
 const MasterScene = () => {
     // camera
@@ -23,7 +25,8 @@ const MasterScene = () => {
     // HUD
     const camera2d = new THREE.OrthographicCamera(0, Global.width, Global.height, 0, 1, 1000);
     camera2d.position.setZ(10);
-    ThreeUtils.drawInventory();
+    drawInventory();
+    ThreeUtils.drawEndScene();
 
     // renderer
     const renderer = new THREE.WebGLRenderer();
@@ -50,7 +53,7 @@ const MasterScene = () => {
         renderer.clear();
         renderer.render(Global.getCurrentScene().scene, camera);
         renderer.clearDepth();
-        renderer.render(Global.scene2d, camera2d);
+        renderer.render(Global.getCurrentScene2D(), camera2d);
 
         requestAnimationFrame(animate);
     }
@@ -60,10 +63,11 @@ const MasterScene = () => {
 PhysicsLoader('ammo', () => {
     Global.addScenes({
         'room11': Room11Scene(),
+        'room12': Room12Scene(),
         'room22': Room22Scene(),
         'room23': Room23Scene()
     });
 
-    Global.setCurrentScene("room23");
+    Global.setCurrentScene("room11");
     MasterScene();
 });

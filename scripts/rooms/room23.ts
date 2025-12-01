@@ -38,6 +38,7 @@ export const Room23Scene = () => {
 
     const initialize = () => {
         switchScheme("movement");
+        Global.setCurrentScene2D(Global.gameScene2D);
 
         scene.remove(player);
         physics.destroy(player);
