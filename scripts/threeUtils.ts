@@ -2,7 +2,7 @@
 import * as Global from './global';
 import { ohexToRGBA, ICONS } from './icons';
 import { delta, getInteract } from './controls';
-import { ExtendedMesh } from 'enable3d'
+import { ExtendedMesh, THREE } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics';
 import { DrawSprite, TextSprite, TextTexture } from '@enable3d/three-graphics/dist/flat';
 import Factories from '@enable3d/common/dist/factories';
@@ -178,13 +178,24 @@ function setActive3D(object: ExtendedMesh, value: boolean) {
         Global.getCurrentScene().physics.destroy(object);
         return;
     }
-    object.position.x = Global.getPlayerPosition().x;
-    object.position.z = Global.getPlayerPosition().z;
+    const dropPos = getDropPosition();
+    object.position.x = dropPos.x;
+    object.position.z = dropPos.y;
 
     Global.getCurrentScene().physics.add.existing(object);
     Global.getCurrentScene().scene.add(object);
 
     object.body.needUpdate = true;
+}
+
+function getDropPosition(dropDist: number = 2) {
+    const playerPosVec3 = Global.getPlayerPosition();
+    const playerPosVec2 = new THREE.Vector2(playerPosVec3.x, playerPosVec3.z);
+    let dir = new THREE.Vector2(0, 0).sub(playerPosVec2).normalize();
+    if (dir.length() == 0) dir.set(1, 0);
+    const dropPosVec2 = playerPosVec2.clone().add(dir.multiplyScalar(dropDist));
+
+    return dropPosVec2;
 }
 
 function setActive2D(icon: DrawSprite, active: boolean, i: number = 0) {
