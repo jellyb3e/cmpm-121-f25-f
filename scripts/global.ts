@@ -57,6 +57,7 @@ export const lockedDoorMat = new THREE.MeshLambertMaterial({ color: LOCKED_COLOR
 export const playerTag = "player";
 export const collectibleTag = "collectible";
 export const keyTag = "key";
+export const stomachTag = "stomach";
 
 // tunable gameplay values
 export const MOVE_SPEED = 3;

@@ -8,6 +8,7 @@ import * as Global from '../global';
 import * as ThreeUtils from '../threeUtils';
 import { switchScheme } from '../controls';
 import { ICONS } from '../icons';
+import { addToInventory } from '../inventoryUtils';
 
 export const Room11Scene = () => {
     // scene
@@ -29,7 +30,8 @@ export const Room11Scene = () => {
             1,
             1,
             physics
-        )
+        ),
+        ThreeUtils.makeStomach(3, 1, 3, physics)
     ];
 
     // PLAYER

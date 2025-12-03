@@ -136,9 +136,14 @@ export function makeCollectible(
             collectible.trigger.body.needUpdate = true;
         },
         collisionCallback: (other: any) => {
-            if (compareTag(other, Global.playerTag) && getInteract() && !collected(object)) {
-                Inventory.addToInventory(collectible);
-                onCollect();
+            if (compareTag(other, Global.playerTag) && !collected(object)) {
+                if (getInteract()) {
+                    Inventory.addToInventory(collectible);
+                    onCollect();
+                } else if (getUse()) {
+                    console.log("im very hungry");
+                    tryConsume(collectible);
+                }
             }
         }
     };
@@ -298,4 +303,29 @@ export function drawEndScene() {
 
     label.setPosition(Global.width / 2, Global.height / 2);
     Global.endScene2D.add(label);
+}
+
+export function makeStomach(x: number, y: number, z: number, physics: AmmoPhysics) {
+    const stomach = physics.add.capsule({ x: x, y: y, z: z, radius: .3, length: .5 }, { lambert: { color: Global.STOMACH_COLOR } });
+    const stomachCollectible = makeCollectible(
+        "Stomach",
+        ICONS.stomach.draw(),
+        stomach,
+        0,
+        3,
+        physics
+    );
+    stomachCollectible.object.userData.tag = Global.stomachTag;
+
+
+    return stomachCollectible;
+}
+
+function tryConsume(foodItem: Global.collectible) {
+    const selectorItem = Global.INVENTORY[Inventory.getSelectorIndex()];
+    if (!selectorItem) return;
+
+    if (compareTag(selectorItem.object, Global.stomachTag) && getUse()) {
+        Inventory.setActive3D(foodItem, false);
+    }
 }
