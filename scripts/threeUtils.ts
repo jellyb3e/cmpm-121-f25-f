@@ -102,6 +102,8 @@ export function makeCollectible(
     name: string,
     icon: DrawSprite,
     object: ExtendedMesh,
+    quantity: number,
+    stackSize: number,
     physics: AmmoPhysics,
     onCollect: Function = () => { }
 ) {
@@ -120,6 +122,8 @@ export function makeCollectible(
         label,
         object,
         trigger,
+        quantity,
+        stackSize,
         triggerUpdate: () => {
             if (!collectible.trigger || !collectible.trigger.body) return;
             collectible.trigger.position.copy(object.position);
@@ -141,6 +145,8 @@ export function makeKey(x: number, y: number, z: number, physics: AmmoPhysics) {
         "Key",
         ICONS.ball.draw(),
         physics.add.sphere({ x: x, y: y, z: z, radius: 0.4 }, { lambert: { color: Global.YELLOW } }),
+        1,
+        1,
         physics,
         () => { Global.setHasKey(true); }
     );
@@ -229,7 +235,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
 
 export function makePuzzleCollectible(x: number, y: number, z: number, physics: AmmoPhysics) {
     const puzzle = physics.add.box({ x: x, y: y, z: z, width: 1.5, depth: 1.5, height: .3 }, { lambert: { color: Global.PUZZLE_COLOR } });
-    const collectible = makeCollectible("Puzzle", ICONS.puzzle.draw(), puzzle, physics, () => {
+    const collectible = makeCollectible("Puzzle", ICONS.puzzle.draw(), puzzle, 1, 1, physics, () => {
         Global.setCurrentScene("room22");
         Global.setHoldingPuzzle(true);
     });

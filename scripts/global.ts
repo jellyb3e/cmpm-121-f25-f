@@ -10,6 +10,8 @@ export type collectible = {
     label: TextSprite;
     object: ExtendedMesh;
     trigger: ExtendedMesh;
+    quantity: number;
+    stackSize: number;
     triggerUpdate: () => void;
     collisionCallback: (other: any) => void;
 }
