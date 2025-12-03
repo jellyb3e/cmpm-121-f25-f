@@ -43,6 +43,7 @@ export const YELLOW = 0xffff00;
 export const GREEN = 0x449944;
 export const PUZZLE_COLOR = 0x36291e;
 export const PUZZLE_WALL_COLOR = 0x47382a;
+export const STOMACH_COLOR = 0xba759d;
 
 export const INVENTORY_BORDER_COLOR = 0x2a2a2a;
 export const INVENTORY_FILL_COLOR = 0x000000;

@@ -15,6 +15,9 @@ export const ICONS = {
     },
     "ball": {
         draw: () => { return new DrawSprite(Global.inventorySlotSize / 2, Global.inventorySlotSize / 2, drawCircle("", ohexToRGBA(Global.YELLOW))); }
+    },
+    "stomach": {
+        draw: () => { return new DrawSprite(Global.inventorySlotSize / 2, Global.inventorySlotSize / 2, drawStomach("", ohexToRGBA(Global.STOMACH_COLOR))); }
     }
 }
 
@@ -40,7 +43,21 @@ const drawCircle = (strokeStyle: string, fillStyle: string) => (ctx) => {
     ctx.fillStyle = fillStyle;
     ctx.lineWidth = 5;
 
-    ctx.arc(radius, radius, radius - ctx.lineWidth, 0, Math.PI * 2);
+    ctx.ellipse(width / 2, width / 2, radius, radius, 0, 0, 2 * Math.PI);
+
+    if (fillStyle) ctx.fill();
+    if (strokeStyle) ctx.stroke();
+};
+
+const drawStomach = (strokeStyle: string, fillStyle: string) => (ctx) => {
+    const { width } = ctx.canvas;
+
+    ctx.beginPath();
+    ctx.strokeStyle = strokeStyle;
+    ctx.fillStyle = fillStyle;
+    ctx.lineWidth = 5;
+
+    ctx.ellipse(width / 2, width / 2, width / 2, width / 3, 0, 0, 2 * Math.PI);
 
     if (fillStyle) ctx.fill();
     if (strokeStyle) ctx.stroke();
