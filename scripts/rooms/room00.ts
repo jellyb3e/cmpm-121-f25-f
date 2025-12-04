@@ -30,14 +30,14 @@ export const Room00Scene = () => {
     ThreeUtils.makeRoom(physics);
 
     // ENGLISH
-    ThreeUtils.makeDoor(-5, 2, -10, 90, physics, "room11", false, factory, "Japanese", "japanese");
+    ThreeUtils.makeLanguageDoor(-5, 2, -10, 90, physics, "room11", false, factory, "Japanese", "japanese");
     // LANGUAGE 2
-    ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room11", false, factory, "English", "english");
+    ThreeUtils.makeLanguageDoor(0, 2, -10, 90, physics, "room11", false, factory, "English", "english");
     // LANGUAGE 3
-    ThreeUtils.makeDoor(5, 2, -10, 90, physics, "room11", false, factory, "Arabic", "arabic");
+    ThreeUtils.makeLanguageDoor(5, 2, -10, 90, physics, "room11", false, factory, "Arabic", "arabic");
 
     // label above the doors
-    ThreeUtils.makeLabel(factory, "Choose VERY wisely.", 0.05, 0, 7, -8);
+    let label = ThreeUtils.makeLabel3D("Choose VERY wisely.", factory, 0, 7, -8);
 
     // clock
     const clock = new THREE.Clock();

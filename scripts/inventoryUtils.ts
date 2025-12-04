@@ -2,7 +2,8 @@ import { TextTexture, TextSprite, DrawSprite } from "@enable3d/three-graphics/di
 import { THREE } from "enable3d";
 import { ICONS } from "./icons";
 import * as Global from './global';
-import { compareTag, makeTrigger, updateLabel } from "./threeUtils";
+import * as ThreeUtils from "./threeUtils";
+import { getTranslatedText } from "./utils";
 
 // inventory selector (which item is selected)
 let selectorIndex: number = 0;
@@ -43,12 +44,12 @@ function bindTriggerCollision(collectible: Global.collectible) {
 export function addToInventory(collectible: Global.collectible) {
     for (let i = 0; i < Global.inventorySlots; i++) {
         if (Global.INVENTORY[i] == null && !collectible.object.userData.collected) {
+            Global.INVENTORY[i] = collectible;
             setActive3D(collectible, false);
             setActive2D(collectible.icon, true, i);
-            updateQuantityLabel(collectible);
-            setActive2D(collectible.label, true, i, 0, Global.inventorySlotSize / 2);
+            updateCollectibleLabel(collectible, "label", i, 0, Global.inventorySlotSize / 2);
+            updateQuantityLabel(collectible, i);
 
-            Global.INVENTORY[i] = collectible;
             return;
         }
     }
@@ -94,7 +95,7 @@ export function dropCurrentItem() {
     setActive3D(selectorItem, true);
     setActive2D(selectorItem.icon, false);
     setActive2D(selectorItem.label, false);
-    if (compareTag(selectorItem.object, Global.stomachTag)) { setActive2D(selectorItem.quantityLabel, false); }
+    if (ThreeUtils.compareTag(selectorItem.object, Global.stomachTag)) { setActive2D(selectorItem.quantityLabel, false); }
 
     AddToSceneCollectibles(selectorItem);
     Global.INVENTORY[selectorIndex] = null;
@@ -121,7 +122,7 @@ export function setActive3D(collectible: Global.collectible, value: boolean, pla
     scene.physics.add.existing(object);
     scene.scene.add(object);
 
-    collectible.trigger = makeTrigger(scene.physics);
+    collectible.trigger = ThreeUtils.makeTrigger(scene.physics);
     scene.scene.add(collectible.trigger);
     bindTriggerCollision(collectible);
     AddToSceneCollectibles(collectible, scene);
@@ -151,13 +152,24 @@ export function setActive2D(icon: DrawSprite | TextSprite, active: boolean, i: n
     }
 }
 
-export function updateQuantityLabel(collectible: Global.collectible, value: number = 0) {
-    if (!compareTag(collectible.object, Global.stomachTag)) return;
+export function updateQuantityLabel(collectible: Global.collectible, i: number, value: number = 0) {
+    if (!ThreeUtils.compareTag(collectible.object, Global.stomachTag)) return;
     const offsetPosX = -Global.inventorySlotSize / 4;   // bottom right of item
     const offsetPosY = Global.inventorySlotSize / 4
 
-    setActive2D(collectible.quantityLabel, false);
     collectible.quantity = Math.min(collectible.quantity + value, collectible.stackSize);
-    collectible.quantityLabel = updateLabel(collectible, collectible.quantity.toString());
-    setActive2D(collectible.quantityLabel, true, selectorIndex, offsetPosX, offsetPosY);
+    updateCollectibleLabel(collectible, "quantityLabel", i, offsetPosX, offsetPosY, `${collectible.quantity}/${collectible.stackSize}`);
+}
+
+// updates a collectible's label based on selected language 
+export function updateCollectibleLabel(collectible: Global.collectible, labelName: "quantityLabel" | "label", i: number, offsetPosX: number, offsetPosY: number, newText: string = "") {
+    const newLabelText = (newText == "") ? getTranslatedText(collectible.name) : newText;
+
+    setActive2D(collectible[labelName], false);
+    const label = ThreeUtils.makeNewLabel(newLabelText);
+    label.renderOrder = 1;
+    collectible[labelName] = label;
+    setActive2D(collectible[labelName], true, i, offsetPosX, offsetPosY);
+
+    return label;
 }

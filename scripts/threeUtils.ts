@@ -51,9 +51,9 @@ export function makeDoor(
     physics: AmmoPhysics,
     nextRoom: string,
     locked: boolean = false,
-    factory?: Factories,
-    label: string = "",
-    newLanguage: string = "") {
+    collisionCallback: Function = () => { },
+    passthroughCondition: Function = () => { return true; }
+) {
 
     const door = physics.add.box({ x: x, y: y, z: z, width: .25, height: 3, depth: 2 });
     setDoorLock(door, locked);
@@ -61,16 +61,13 @@ export function makeDoor(
     door.rotation.y = rotation * (Math.PI / 180);
     door.body.needUpdate = true;
 
-    if (label != "" && factory) makeLabel(factory, label, 0.02, x, y + 1, z + 1);
-
     door.body.on.collision((other: any) => {
         if (compareTag(other, Global.playerTag)) {
             if (door.userData.locked == true) {
-                tryUnlockDoor(door);
+                if (passthroughCondition()) tryUnlockDoor(door);
+                collisionCallback();
                 return;
             }
-
-            if (newLanguage != "") Utils.setSelectedLanuage(newLanguage);
 
             let playerX = clampDoorPos(x);
             let playerY = Global.getPlayerPosition().y;
@@ -80,7 +77,49 @@ export function makeDoor(
             Global.setCurrentScene(nextRoom);
         }
     });
+    return door;
 }
+
+export function makeLanguageDoor(
+    x: number,
+    y: number,
+    z: number,
+    rotation: number,
+    physics: AmmoPhysics,
+    nextRoom: string,
+    locked: boolean = false,
+    factory: Factories,
+    labelText: string,
+    newLanguage: string
+) {
+    const door = makeDoor(x, y, z, rotation, physics, nextRoom, locked, () => {
+        Utils.setSelectedLanuage(newLanguage);
+        console.log("language changed to " + Utils.getSelectedLanguage());
+    });
+    makeLabel3D(labelText, factory, x, y, z + 1);
+}
+
+export function makeExitDoor(
+    x: number,
+    y: number,
+    z: number,
+    rotation: number,
+    physics: AmmoPhysics,
+    nextRoom: string,
+    factory: Factories,
+) {
+    const label: TextSprite = makeLabel3D("TOO HUNGRY TO UNLOCK", factory, x, y, z + 1, .03);
+    label.visible = false;
+
+    const door = makeDoor(
+        x, y, z, rotation, physics, nextRoom, true,
+        () => {
+            label.visible = !Global.getFull();
+        },
+        Global.getFull
+    );
+}
+
 
 function setDoorLock(door: ExtendedMesh, value: boolean) {
     door.material = (value) ? Global.lockedDoorMat : Global.unlockedDoorMat;
@@ -140,8 +179,8 @@ export function makeCollectible(
         name,
         icon,
         label,
-        quantityLabel,
         object,
+        quantityLabel,
         trigger,
         quantity,
         stackSize,
@@ -214,6 +253,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
     ceiling.visible = false;
     ground.add(ceiling);
 
+    /*
     const maze: ExtendedMesh[] = [];
     for (let i: number = 0; i < 16; i++) {
         for (let j: number = 0; j < 16; j++) {
@@ -238,6 +278,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
             }
         }
     }
+        */
 
     makeHand(9.75, 2, 5, "right", ground, factory);
     makeHand(-9.75, 2, 5, "left", ground, factory);
@@ -250,9 +291,11 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
 
         ground.body.needUpdate = true;
         ceiling.body.needUpdate = true;
+        /*
         maze.forEach((cell: ExtendedMesh) => {
             cell.body.needUpdate = true;
         });
+        */
     }
 
     return updateRotation;
@@ -294,21 +337,6 @@ export function makeHand(x: number, y: number, z: number, hand: "left" | "right"
     }
 }
 
-export function makeLabel(
-    factory: Factories,
-    label: string,
-    scale: number = 0.05,
-    x: number = 0,
-    y: number = 0,
-    z: number = 0) {
-
-    const labelTexture = new TextTexture(label, { fillStyle: Global.TEXT_COLOR });
-    const spriteTexture = new TextSprite(labelTexture);
-    spriteTexture.setScale(scale);
-    spriteTexture.position.set(x, y, z);
-    factory.add.existing(spriteTexture);
-}
-
 export function drawEndScene() {
     // add 2d text
     const labelTexture = new TextTexture('room 12.', { fontSize: 48, fillStyle: Global.TEXT_COLOR });
@@ -325,7 +353,7 @@ export function makeStomach(x: number, y: number, z: number, physics: AmmoPhysic
         ICONS.stomach.draw(),
         stomach,
         0,
-        3,
+        1,
         physics
     );
     stomachCollectible.object.userData.tag = Global.stomachTag;
@@ -340,17 +368,21 @@ function tryConsume(foodItem: Global.collectible) {
 
     if (compareTag(selectorItem.object, Global.stomachTag) && getUse()) {
         Inventory.setActive3D(foodItem, false);
-        Inventory.updateQuantityLabel(selectorItem, 1);
+        Inventory.updateQuantityLabel(selectorItem, Inventory.getSelectorIndex(), 1);
+        Global.setFull(selectorItem.quantity == selectorItem.stackSize);
     }
 }
 
-// updates a collectible's label based on selected language 
-export function updateLabel(collectible: Global.collectible, newText: string = "") {
-    const newLabelText = (newText == "") ? Utils.getTranslatedText(collectible.name) : newText;
-
-    const labelTexture = new TextTexture(newLabelText, { fontSize: 24, fillStyle: Global.TEXT_COLOR });
+export function makeNewLabel(newText: string = "") {
+    const labelTexture = new TextTexture(newText, { fontSize: 24, fillStyle: Global.TEXT_COLOR });
     const label = new TextSprite(labelTexture);
-    label.renderOrder = 1;
+    return label;
+}
 
+export function makeLabel3D(newText: string = "", factory: Factories, x: number, y: number, z: number, scale: number = 0.05) {
+    const label = makeNewLabel(newText);
+    label.position.set(x, y, z);
+    label.setScale(scale);
+    factory.add.existing(label);
     return label;
 }

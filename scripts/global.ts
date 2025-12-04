@@ -78,6 +78,7 @@ export const slotOffset = 10;
 export const INVENTORY: (collectible | null)[] = Array(inventorySlots).fill(null);
 let holdingPuzzle: boolean = false;
 let hasKey: boolean = false;
+let full: boolean = false;
 
 // SCENE HANDLING
 let currentScene: sceneType;
@@ -143,4 +144,13 @@ export function getHasKey() {
 
 export function setHasKey(value: boolean) {
     hasKey = value;
+}
+
+export function getFull() {
+    return full;
+}
+
+export function setFull(value: boolean) {
+    full = value;
+    console.log(full);
 }

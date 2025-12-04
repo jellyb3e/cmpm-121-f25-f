@@ -40,7 +40,7 @@ export const Room11Scene = () => {
     ThreeUtils.makeRoom(physics);
     ThreeUtils.makeDoor(10, 2, 0, 0, physics, "room23");
     // EXIT DOOR
-    ThreeUtils.makeDoor(0, 2, -10, 90, physics, "room12", true);
+    ThreeUtils.makeExitDoor(0, 2, -10, 90, physics, "room12", factory);
 
     // clock
     const clock = new THREE.Clock();
