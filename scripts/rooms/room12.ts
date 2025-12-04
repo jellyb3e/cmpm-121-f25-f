@@ -26,9 +26,13 @@ export const Room12Scene = () => {
     player.position.y = 2;
     player.body.setCollisionFlags(2);
 
+    // PLAYER
+    const stomach = ThreeUtils.makeStomach(0, 1, 0, physics).object;
+    stomach.body.setCollisionFlags(2);
+
     ThreeUtils.makeRoom(physics);
     let angle = 0;
-    const radius = 2;
+    const radius = 2.5;
     const speed = .01;
 
     // clock
@@ -46,6 +50,10 @@ export const Room12Scene = () => {
         player.position.x = Math.cos(angle) * radius;
         player.position.z = Math.sin(angle) * radius;
         player.body.needUpdate = true;
+
+        stomach.position.x = Math.cos(-angle) * (radius - 1.5);
+        stomach.position.z = Math.sin(-angle) * (radius - 1.5);
+        stomach.body.needUpdate = true;
 
         physics.update(deltaTime);
         physics.updateDebugger();

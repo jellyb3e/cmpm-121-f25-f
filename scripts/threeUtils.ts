@@ -52,6 +52,7 @@ export function makeDoor(
     nextRoom: string,
     locked: boolean = false,
     collisionCallback: Function = () => { },
+    lockedCollisionCallback: Function = () => { },
     passthroughCondition: Function = () => { return true; }
 ) {
 
@@ -65,10 +66,11 @@ export function makeDoor(
         if (compareTag(other, Global.playerTag)) {
             if (door.userData.locked == true) {
                 if (passthroughCondition()) tryUnlockDoor(door);
-                collisionCallback();
+                lockedCollisionCallback();
                 return;
             }
 
+            collisionCallback();
             let playerX = clampDoorPos(x);
             let playerY = Global.getPlayerPosition().y;
             let playerZ = clampDoorPos(z);
@@ -113,6 +115,7 @@ export function makeExitDoor(
 
     const door = makeDoor(
         x, y, z, rotation, physics, nextRoom, true,
+        () => { },
         () => {
             label.visible = !Global.getFull();
         },
@@ -253,7 +256,6 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
     ceiling.visible = false;
     ground.add(ceiling);
 
-    /*
     const maze: ExtendedMesh[] = [];
     for (let i: number = 0; i < 16; i++) {
         for (let j: number = 0; j < 16; j++) {
@@ -278,7 +280,6 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
             }
         }
     }
-        */
 
     makeHand(9.75, 2, 5, "right", ground, factory);
     makeHand(-9.75, 2, 5, "left", ground, factory);
@@ -291,11 +292,10 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
 
         ground.body.needUpdate = true;
         ceiling.body.needUpdate = true;
-        /*
+
         maze.forEach((cell: ExtendedMesh) => {
             cell.body.needUpdate = true;
         });
-        */
     }
 
     return updateRotation;
