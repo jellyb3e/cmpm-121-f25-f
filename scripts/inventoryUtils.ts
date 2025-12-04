@@ -159,6 +159,5 @@ export function updateQuantityLabel(collectible: Global.collectible, value: numb
     setActive2D(collectible.quantityLabel, false);
     collectible.quantity = Math.min(collectible.quantity + value, collectible.stackSize);
     collectible.quantityLabel = updateLabel(collectible, collectible.quantity.toString());
-    console.log(collectible.quantity);
     setActive2D(collectible.quantityLabel, true, selectorIndex, offsetPosX, offsetPosY);
 }
