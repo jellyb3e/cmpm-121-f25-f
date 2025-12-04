@@ -1,6 +1,7 @@
 
 import * as Global from './global';
 import * as Inventory from './inventoryUtils';
+import * as Utils from "./utils";
 import { ICONS } from './icons';
 import { delta, getInteract, getUse } from './controls';
 import { ExtendedMesh, FLAT } from 'enable3d'
@@ -116,7 +117,8 @@ export function makeCollectible(
     object.userData.tag = Global.collectibleTag;
     object.userData.collected = false;
 
-    const labelTexture = new TextTexture(name, { fontSize: 24, fillStyle: "black" });
+    const translatedName = Utils.getTranslatedText(name);
+    const labelTexture = new TextTexture(translatedName, { fontSize: 24, fillStyle: "black" });
     const label = new TextSprite(labelTexture);
     label.renderOrder = 1;
 

@@ -1,0 +1,18 @@
+{
+    "Ball": {
+        "french": "balle",
+        "spanish": "belota"
+    },
+    "Key": {
+        "french": "keyfrench",
+        "spanish": "keyspanish"
+    },
+    "Puzzle": {
+        "french": "puzzlefrench",
+        "spanish": "puzzlespanish"
+    },
+    "Stomach": {
+        "french": "stomachfrench",
+        "spanish": "estomago"
+    }
+}
