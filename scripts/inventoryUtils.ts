@@ -2,7 +2,7 @@ import { TextTexture, TextSprite, DrawSprite } from "@enable3d/three-graphics/di
 import { THREE } from "enable3d";
 import { ICONS } from "./icons";
 import * as Global from './global';
-import { makeTrigger, updateLabel } from "./threeUtils";
+import { compareTag, makeTrigger, updateLabel } from "./threeUtils";
 
 // inventory selector (which item is selected)
 let selectorIndex: number = 0;
@@ -45,7 +45,7 @@ export function addToInventory(collectible: Global.collectible) {
         if (Global.INVENTORY[i] == null && !collectible.object.userData.collected) {
             setActive3D(collectible, false);
             setActive2D(collectible.icon, true, i);
-            collectible.label = updateLabel(collectible);
+            updateQuantityLabel(collectible);
             setActive2D(collectible.label, true, i, 0, Global.inventorySlotSize / 2);
 
             Global.INVENTORY[i] = collectible;
@@ -94,6 +94,8 @@ export function dropCurrentItem() {
     setActive3D(selectorItem, true);
     setActive2D(selectorItem.icon, false);
     setActive2D(selectorItem.label, false);
+    if (compareTag(selectorItem.object, Global.stomachTag)) { setActive2D(selectorItem.quantityLabel, false); }
+
     AddToSceneCollectibles(selectorItem);
     Global.INVENTORY[selectorIndex] = null;
 }
@@ -147,4 +149,16 @@ export function setActive2D(icon: DrawSprite | TextSprite, active: boolean, i: n
         Global.gameScene2D.remove(icon);
         icon.setPosition(-100, -100);
     }
+}
+
+export function updateQuantityLabel(collectible: Global.collectible, value: number = 0) {
+    if (!compareTag(collectible.object, Global.stomachTag)) return;
+    const offsetPosX = -Global.inventorySlotSize / 4;   // bottom right of item
+    const offsetPosY = Global.inventorySlotSize / 4
+
+    setActive2D(collectible.quantityLabel, false);
+    collectible.quantity = Math.min(collectible.quantity + value, collectible.stackSize);
+    collectible.quantityLabel = updateLabel(collectible, collectible.quantity.toString());
+    console.log(collectible.quantity);
+    setActive2D(collectible.quantityLabel, true, selectorIndex, offsetPosX, offsetPosY);
 }

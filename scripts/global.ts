@@ -10,6 +10,7 @@ export type collectible = {
     icon: DrawSprite;
     label: TextSprite;
     object: ExtendedMesh;
+    quantityLabel: TextSprite;
     trigger: ExtendedMesh;
     quantity: number;
     stackSize: number;

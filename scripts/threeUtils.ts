@@ -130,12 +130,17 @@ export function makeCollectible(
     const label = new TextSprite(labelTexture);
     label.renderOrder = 1;
 
+    const quantityLabelTexture = new TextTexture(quantity.toString(), { fontSize: 24, fillStyle: Global.TEXT_COLOR });
+    const quantityLabel = new TextSprite(quantityLabelTexture);
+    quantityLabel.renderOrder = 1;
+
     const trigger = makeTrigger(physics);
 
     const collectible: Global.collectible = {
         name,
         icon,
         label,
+        quantityLabel,
         object,
         trigger,
         quantity,
@@ -151,7 +156,6 @@ export function makeCollectible(
                     Inventory.addToInventory(collectible);
                     onCollect();
                 } else if (getUse()) {
-                    console.log("im very hungry");
                     tryConsume(collectible);
                 }
             }
@@ -298,12 +302,11 @@ export function makeLabel(
     y: number = 0,
     z: number = 0) {
 
-    const labelTexture = new TextTexture(label,{ fillStyle: Global.TEXT_COLOR });
+    const labelTexture = new TextTexture(label, { fillStyle: Global.TEXT_COLOR });
     const spriteTexture = new TextSprite(labelTexture);
     spriteTexture.setScale(scale);
     spriteTexture.position.set(x, y, z);
     factory.add.existing(spriteTexture);
-
 }
 
 export function drawEndScene() {
@@ -337,6 +340,7 @@ function tryConsume(foodItem: Global.collectible) {
 
     if (compareTag(selectorItem.object, Global.stomachTag) && getUse()) {
         Inventory.setActive3D(foodItem, false);
+        Inventory.updateQuantityLabel(selectorItem, 1);
     }
 }
 
