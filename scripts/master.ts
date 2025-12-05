@@ -6,7 +6,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { PhysicsLoader } from '@enable3d/ammo-physics';
 
 import * as Global from './global';
-import * as ThreeUtils from './threeUtils';
 import { Room00Scene } from './rooms/room00';
 import { Room11Scene } from './rooms/room11';
 import { Room12Scene } from './rooms/room12';
@@ -66,6 +65,6 @@ PhysicsLoader('ammo', () => {
         'room23': Room23Scene()
     });
 
-    Global.setCurrentScene("room11");
+    Global.setCurrentScene("room00");
     MasterScene();
 });
