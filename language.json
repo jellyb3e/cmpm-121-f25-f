@@ -26,5 +26,9 @@
     "Table": {
         "japanese": "テーブル",
         "arabic": "طاولة"
+    },
+    "TOO HUNGRY TO UNLOCK": {
+        "japanese": "お腹が空きすぎてロックを解除できない",
+        "arabic": "جائع جداً لدرجة لا تسمح لي بفتح القفل"
     }
 }

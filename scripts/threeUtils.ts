@@ -110,13 +110,13 @@ export function makeExitDoor(
     nextRoom: string,
     factory: Factories,
 ) {
-    const label: TextSprite = makeLabel3D("TOO HUNGRY TO UNLOCK", factory, x, y, z + 1, .03);
-    label.visible = false;
+    let label : TextSprite | null = null;
 
     const door = makeDoor(
         x, y, z, rotation, physics, nextRoom, true,
-        () => { drawEndScene(); console.log("translating scene") },
+        () => { drawEndScene(); },
         () => {
+            if (!label) { label = makeLabel3D(Utils.getTranslatedText("TOO HUNGRY TO UNLOCK"), factory, x, y, z + 1, .03); } 
             label.visible = !Global.getFull();
         },
         Global.getFull
@@ -360,7 +360,7 @@ export function makeStomach(x: number, y: number, z: number, physics: AmmoPhysic
         "Stomach",
         stomach,
         0,
-        10,
+        5,
         physics,
         1000
     );
