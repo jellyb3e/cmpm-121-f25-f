@@ -1,5 +1,25 @@
 # 121-Final-Project
 
+## Devlog Entry - 5 December 2025
+
+### Selected requirements
+
+1. [Continuous Inventory] - We chose continuous inventory because it felt like a natural and interesting evolution of our existing inventory system from F2.
+2. [Visual Themes] - We chose this because it seemed pretty straightforward since there are only 2 modes (dark and light).
+3. [i18n + l10n] - We chose the language requirement because we thought it would be cool if our game supported languages that some of our friends know.
+4. [External DSL] - We chose this requirement because a JSON file felt like a good structure for language support.
+
+### How we satisfied the software requirements
+
+1. [Continuous Inventory] - The quantity of the stomach dictates whether or not you can unlock the door once you have the key. If you are hungry, you cannot unlock the door.
+2. [Visual Themes] - Our game supports light and dark mode and will check the user's device settings and change the color scheme accordingly. This impacts background and text color, as well as scene lighting.
+3. [i18n + l10n] - Our game supports 3 languages, English, Japanese, and Arabic. The user can select the game's language by entering one of the three language doors. We also have utility functions to dynamically translate inventory items as they are picked up.
+4. [External DSL] - We created a JSON file to define the translated versions of all of the words in our game which use the English word as its key.
+
+### Reflection
+
+Initially we had planned ahead for F3 to have a battery be the continuous inventory item. We changed our plans to have it be a stomach instead because we thought the mechanics would be more interesting.
+
 ## Devlog Entry - 1 December 2025
 
 ### How we satisfied the software requirements
