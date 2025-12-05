@@ -18,5 +18,9 @@
     "room 12.": {
         "japanese": "12号室。",
         "arabic": "الغرفة رقم 12."
+    },
+    "Couch": {
+        "japanese": "カウチ",
+        "arabic": "أريكة"
     }
 }

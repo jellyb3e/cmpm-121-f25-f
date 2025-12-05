@@ -31,7 +31,8 @@ export const Room11Scene = () => {
             1,
             physics
         ),
-        ThreeUtils.makeStomach(3, 1, 3, physics)
+        ThreeUtils.makeStomach(3, 1, 3, physics),
+        ThreeUtils.makeCouch(-5, 2, -8, physics, factory)
     ];
 
     // PLAYER

@@ -18,6 +18,9 @@ export const ICONS = {
     },
     "stomach": {
         draw: () => { return new DrawSprite(Global.inventorySlotSize / 2, Global.inventorySlotSize / 2, drawStomach("", ohexToRGBA(Global.STOMACH_COLOR))); }
+    },
+    "couch": {
+        draw: () => { return new DrawSprite(Global.inventorySlotSize / 2, Global.inventorySlotSize / 2, drawRectangle("", ohexToRGBA(Global.GREEN))); }
     }
 }
 

@@ -386,3 +386,26 @@ export function makeLabel3D(newText: string = "", factory: Factories, x: number,
     factory.add.existing(label);
     return label;
 }
+
+export function makeCouch(x: number, y: number, z: number, physics: AmmoPhysics, factory: Factories) {
+    // CUSHION
+    const couch = physics.add.box({ x, y, z, width: 5, depth: 3, height: 1 }, { lambert: { color: Global.GREEN } });
+
+    const backrest = factory.add.box({ x: 0, y: 1, z: -0.75, width: 5, depth: 1, height: 1 }, { lambert: { color: Global.GREEN } });
+    const leftArmrest = factory.add.box({ x: -2, y: 0.75, z: 0, width: 1, depth: 3, height: 0.5 }, { lambert: { color: Global.GREEN } });
+    const rightArmrest = factory.add.box({ x: 2, y: 0.75, z: 0, width: 1, depth: 3, height: 0.5 }, { lambert: { color: Global.GREEN } });
+
+    couch.add(backrest);
+    couch.add(leftArmrest);
+    couch.add(rightArmrest);
+
+    const collectible = makeCollectible(
+        "Couch",
+        ICONS.couch.draw(),
+        couch,
+        1,
+        1,
+        physics
+    );
+    return collectible;
+}
