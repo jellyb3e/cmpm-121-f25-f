@@ -24,7 +24,6 @@ const MasterScene = () => {
     const camera2d = new THREE.OrthographicCamera(0, Global.width, Global.height, 0, 1, 1000);
     camera2d.position.setZ(10);
     drawInventory();
-    ThreeUtils.drawEndScene();
 
     // renderer
     const renderer = new THREE.WebGLRenderer();

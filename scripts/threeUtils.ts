@@ -115,7 +115,7 @@ export function makeExitDoor(
 
     const door = makeDoor(
         x, y, z, rotation, physics, nextRoom, true,
-        () => { },
+        () => { drawEndScene(); console.log("translating scene") },
         () => {
             label.visible = !Global.getFull();
         },
@@ -256,6 +256,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
     ceiling.visible = false;
     ground.add(ceiling);
 
+    /*
     const maze: ExtendedMesh[] = [];
     for (let i: number = 0; i < 16; i++) {
         for (let j: number = 0; j < 16; j++) {
@@ -280,6 +281,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
             }
         }
     }
+        */
 
     makeHand(9.75, 2, 5, "right", ground, factory);
     makeHand(-9.75, 2, 5, "left", ground, factory);
@@ -292,10 +294,10 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
 
         ground.body.needUpdate = true;
         ceiling.body.needUpdate = true;
-
+        /*
         maze.forEach((cell: ExtendedMesh) => {
             cell.body.needUpdate = true;
-        });
+        });*/
     }
 
     return updateRotation;
@@ -339,7 +341,7 @@ export function makeHand(x: number, y: number, z: number, hand: "left" | "right"
 
 export function drawEndScene() {
     // add 2d text
-    const labelTexture = new TextTexture('room 12.', { fontSize: 48, fillStyle: Global.TEXT_COLOR });
+    const labelTexture = new TextTexture(Utils.getTranslatedText('room 12.'), { fontSize: 48, fillStyle: Global.TEXT_COLOR });
     const label = new TextSprite(labelTexture);
 
     label.setPosition(Global.width / 2, Global.height / 2);
