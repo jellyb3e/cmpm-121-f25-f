@@ -1,0 +1,20 @@
+{
+    "title": "Text Translations",
+    "description": "Contains the translated versions of English text.",
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "required": [ "japanese", "arabic"],
+        "additionalProperties": false,
+        "properties": {
+            "japanese": {
+                "description": "The Japanese translation of the English text.",
+                "type": "string"
+            },
+            "arabic": {
+                "description": "The Arabic translation of the English text.",
+                "type": "string"
+            }
+        }
+    }
+}

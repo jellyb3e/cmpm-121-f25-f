@@ -1,4 +1,10 @@
 {
     "deno.enable": false,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "json.schemas": [
+    {
+        "fileMatch": ["language.json"],
+        "url": "./.vscode/language.schema.json"
+    }
+  ]
 }
