@@ -111,13 +111,13 @@ export function makeExitDoor(
     nextRoom: string,
     factory: Factories,
 ) {
-    let label : TextSprite | null = null;
+    let label: TextSprite | null = null;
 
     const door = makeDoor(
         x, y, z, rotation, physics, nextRoom, true,
         () => { drawEndScene(); },
         () => {
-            if (!label) { label = makeLabel3D(Utils.getTranslatedText("TOO HUNGRY TO UNLOCK"), factory, x, y, z + 1, .03); } 
+            if (!label) { label = makeLabel3D(Utils.getTranslatedText("TOO HUNGRY TO UNLOCK"), factory, x, y, z + 1, .03); }
             label.visible = !Global.getFull();
         },
         Global.getFull
@@ -264,7 +264,6 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
     ceiling.visible = false;
     ground.add(ceiling);
 
-    /*
     const maze: ExtendedMesh[] = [];
     for (let i: number = 0; i < 16; i++) {
         for (let j: number = 0; j < 16; j++) {
@@ -289,7 +288,7 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
             }
         }
     }
-*/
+
     makeHand(9.75, 2, 5, "right", ground, factory);
     makeHand(-9.75, 2, 5, "left", ground, factory);
     makePuzzleSolveTrigger(physics);
@@ -301,11 +300,11 @@ export function makePuzzle(physics: AmmoPhysics, factory: Factories) {
 
         ground.body.needUpdate = true;
         ceiling.body.needUpdate = true;
-    /*
-        maze.forEach((cell: ExtendedMesh) => {
-            cell.body.needUpdate = true;
-        });
-    */
+        
+            maze.forEach((cell: ExtendedMesh) => {
+                cell.body.needUpdate = true;
+            });
+        
     }
 
     return updateRotation;
@@ -363,7 +362,7 @@ export function makeStomach(x: number, y: number, z: number, physics: AmmoPhysic
         "Stomach",
         stomach,
         0,
-        5,
+        10,
         physics,
         1000
     );
